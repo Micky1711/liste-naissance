@@ -1,2 +1,3 @@
 app/config/database.php
 public/assets/uploads/*
+vendor/*
