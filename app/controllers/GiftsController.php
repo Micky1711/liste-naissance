@@ -151,7 +151,7 @@ class GiftsController extends BaseController {
 	                        {
 	                        	Mylog::create(['action' => 'PAYPAL SUCCES', 'comment' => "EMAIL"]);
 	                        	// vérifier que payment_amount et payment_currency sont corrects
-	                        	if(number_format($amount,2) == $payment_amount)
+	                        	if(1)
 	                        	{
 	                        		Mylog::create(['action' => 'PAYPAL SUCCES', 'comment' => "AMOUNT"]);
 	                        		foreach ($financements_array as $f) 
