@@ -120,9 +120,12 @@ class GiftsController extends BaseController {
 	    // vérifier que txn_id n'a pas été précédemment traité: Créez une fonction qui va interroger votre base de données
 	    $nb_txn_id = Financement::where('txn_id',$txn_id)->count();
 	    Mylog::create(['action' => 'PAYPAL', 'comment' => "txn = ".$nb_txn_id ]);
+
+	    $comment = 'par '.$g->user->name.'. Montant attendu : '.number_format($amount,2) .'€ Montant proposé '.$payment_amount.' €';
+	       Mylog::create(['action' => 'PAYPAL TEST (AVT FP)', 'comment' => $comment]);
 	    if (!$fp) 
 	    {
-	        $comment = 'par '.$g->user->name.'. Montant attendu : '.number_format($amount,2) .'€ Moontant proposé '.$payment_amount.' €';
+	        $comment = 'par '.$g->user->name.'. Montant attendu : '.number_format($amount,2) .'€ Montant proposé '.$payment_amount.' €';
 	       Mylog::create(['action' => 'PAYPAL FAIL (!FP)', 'comment' => $comment]);
 	    }
 	    else
