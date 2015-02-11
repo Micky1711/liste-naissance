@@ -42,7 +42,6 @@ class UserController extends BaseController {
 		return Redirect::route('login');
 	}
 
-
 	/*
 	 * getRegister()
 	 * postRegister()
