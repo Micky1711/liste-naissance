@@ -7,8 +7,7 @@ class FinancementsController extends BaseController {
 	}
 
 	public function postLibre() {
-		$data = ['montant' => '20', 'moyen' => 'ESPECES', 'email' => 'mickael.icart@gmail.com'];
-		$data['name'] = 'Mickael et Anne';
+
 		$data['subject'] = 'Financement libre sur la liste de naissance';
 		Mail::send('emails.financementlibre', $data, function($message)
 		{
