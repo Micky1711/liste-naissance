@@ -71,6 +71,7 @@ class GiftsController extends BaseController {
 
 	public function postPaypalNotify() 
 	{
+		Mylog::create(['action' => 'PAYPAL', 'comment' => "hello"]);
 		$header = '';
 	    $req = 'cmd=_notify-validate';    
 	    foreach ($_POST as $key => $value) 
