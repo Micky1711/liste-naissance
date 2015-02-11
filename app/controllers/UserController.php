@@ -70,7 +70,7 @@ class UserController extends BaseController {
 			$input['subject'] = 'Bienvenue sur liste de naissance';
 			Mail::send('emails.welcome', $input, function($message) use ($input)
 			{
-			  	$message->from('mickael.icart@gmail.com', 'Liste de naissance ICART');
+			  	$message->from('mickael@anne-et-mickael.com', 'Liste de naissance ICART');
 			  	$message->to($input['email'],  $input['name']);
 			  	$message->subject($input['subject']);
 			});
@@ -279,7 +279,7 @@ class UserController extends BaseController {
 			$data['subject'] 	= 'Votre nouveau mot de passe';
 			Mail::send('emails.confirmpassword', $data, function($message) use ($data)
 			{
-			  	$message->from('mickael.icart@gmail.com', 'Liste de naissance');
+			  	$message->from('mickael@anne-et-mickael.com', 'Liste de naissance');
 			  	$message->to($data['user']->email);
 			  	$message->subject($data['subject']);
 			});
@@ -363,7 +363,7 @@ class UserController extends BaseController {
 			Mail::send('emails.welcome', $data, function($message)
 			{
 			  	$message->from('mickael_ic@hotmail.com', 'Auberge du Bambois');
-			  	$message->to("mickael.icart@gmail.com",  "Mickael ICART");
+			  	$message->to("mickael@anne-et-mickael.com",  "Mickael ICART");
 			  	$message->subject('Bienvenue sur le site');
 			});
 	}
