@@ -89,6 +89,7 @@ class GiftsController extends BaseController {
 	    $fp = fsockopen ("ssl://www.sandbox.paypal.com", 443, $errno, $errstr, 30);   
 
 	    $input = Input::all();
+	    Mylog::create(['action' => 'PAYPAL', 'comment' => json_encode($input) ]);
 	    extract($input);
 
 	    $item_name 			= $input['item_name'];
@@ -100,22 +101,25 @@ class GiftsController extends BaseController {
 	    $receiver_email 	= $input['receiver_email'];
 	    $payer_email 		= $input['payer_email'];
 	    $order_id 			= $input['custom'];	
+	    Mylog::create(['action' => 'PAYPAL', 'comment' => $item_name ]);
 	    /*
 	    $txn_id = 11111;
 	    $custom = '2|3';
 		*/
 	    $financements_array = explode('|', $custom);
+	    Mylog::create(['action' => 'PAYPAL', 'comment' => $custom ]);
 		/* Calcul du montant */		
 		$amount_checked = 0;
 		foreach ($financements_array as $f) {
 			$g = Gift::find($f);
 			$amount_checked += $g->parts*$g->product->partprice;
+			Mylog::create(['action' => 'PAYPAL', 'comment' => "loop" ]);
 		}
 
 	    
 	    // vérifier que txn_id n'a pas été précédemment traité: Créez une fonction qui va interroger votre base de données
 	    $nb_txn_id = Financement::where('txn_id',$txn_id)->first()->count();
-
+	    Mylog::create(['action' => 'PAYPAL', 'comment' => "txn = ".$nb_txn_id ]);
 	    if (!$fp) 
 	    {
 	        $comment = 'par '.$g->user->name.'. Montant attendu : '.number_format($amount,2) .'€ Moontant proposé '.$payment_amount.' €';
