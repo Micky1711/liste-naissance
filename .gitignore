@@ -1,4 +1,4 @@
 app/config/database.php
-app/config/storage/*
+app/storage/*
 public/assets/uploads/*
 vendor/*
