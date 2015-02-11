@@ -118,7 +118,7 @@ class GiftsController extends BaseController {
 
 	    
 	    // vérifier que txn_id n'a pas été précédemment traité: Créez une fonction qui va interroger votre base de données
-	    $nb_txn_id = 1;
+	    $nb_txn_id = Financement::where('txn_id',$txn_id)->count();
 	    Mylog::create(['action' => 'PAYPAL', 'comment' => "txn = ".$nb_txn_id ]);
 	    if (!$fp) 
 	    {
