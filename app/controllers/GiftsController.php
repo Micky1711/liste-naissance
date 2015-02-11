@@ -128,21 +128,27 @@ class GiftsController extends BaseController {
 	            $res = fgets ($fp, 1024);
 	            if (strcmp ($res, "VERIFIED") == 0) 
 	            {
+	            	Mylog::create(['action' => 'PAYPAL SUCCES', 'comment' => "VERIFIED"]);
 	            	// transaction valide
 	               	// vérifier que payment_status a la valeur Completed
 	                if ( $payment_status == "Completed") 
 	                {
+	                	Mylog::create(['action' => 'PAYPAL SUCCES', 'comment' => "COMPLETED"]);
 	                	// vérifier que txn_id n'a pas été précédemment traité: Créez une fonction qui va interroger votre base de données
 	                    if ($nb_txn_id == 0) 
 	                    {
+	                    	Mylog::create(['action' => 'PAYPAL SUCCES', 'comment' => "TXN"]);
 	                    	// vérifier que receiver_email est votre adresse email PayPal principale
-	                        if ( "anne.et.mickael.icartgmail.com" == $receiver_email) 
+	                        if ( "anne.et.mickael.icartgmail.com" == $receiver_email || 1) 
 	                        {
+	                        	Mylog::create(['action' => 'PAYPAL SUCCES', 'comment' => "EMAIL"]);
 	                        	// vérifier que payment_amount et payment_currency sont corrects
 	                        	if(number_format($amount,2) == $payment_amount)
 	                        	{
+	                        		Mylog::create(['action' => 'PAYPAL SUCCES', 'comment' => "AMOUNT"]);
 	                        		foreach ($financements_array as $f) 
 	                        		{
+	                        			Mylog::create(['action' => 'PAYPAL SUCCES', 'comment' => "OK"]);
 										$g = Gift::find($f);
 										$amount = $g->parts*$g->product->partprice;
 										$financement = new financement();
