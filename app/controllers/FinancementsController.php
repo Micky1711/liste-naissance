@@ -8,16 +8,6 @@ class FinancementsController extends BaseController {
 
 	public function postLibre() {
 
-		$data['subject'] = 'Financement libre sur la liste de naissance';
-		Mail::send('emails.financementlibre', $data, function($message)
-		{
-		    $message->from('mickael.icart@gmail.com', 'Liste de naissance');
-		    $message->to('mickael.icart@gmail.com');
-		    $message->subject('Financement libre sur la liste de naissance');
-		});
-
-		return View::make('front.financements.librepost')->with($data);
-		exit;
 		$input = Input::All();
 		extract($input);
 		$rules = array(
