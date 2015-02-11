@@ -28,7 +28,7 @@ return array(
 	|
 	*/
 
-	'host' => 'smtp.anne-et-mickael.com',
+	'host' => 'anne-et-mickael.com',
 
 	/*
 	|--------------------------------------------------------------------------
