@@ -71,7 +71,6 @@ class GiftsController extends BaseController {
 
 	public function postPaypalNotify() 
 	{
-		Mylog::create(['action' => 'PAYPAL', 'comment' => "hello"]);
 		$header = '';
 	    $req = 'cmd=_notify-validate';    
 	    foreach ($_POST as $key => $value) 
@@ -89,7 +88,6 @@ class GiftsController extends BaseController {
 	    $fp = fsockopen ("ssl://www.sandbox.paypal.com", 443, $errno, $errstr, 30);   
 
 	    $input = Input::all();
-	    Mylog::create(['action' => 'PAYPAL', 'comment' => json_encode($input) ]);
 	    extract($input);
 
 	    $item_name 			= $input['item_name'];
@@ -101,32 +99,23 @@ class GiftsController extends BaseController {
 	    $receiver_email 	= $input['receiver_email'];
 	    $payer_email 		= $input['payer_email'];
 	    $order_id 			= $input['custom'];	
-	    Mylog::create(['action' => 'PAYPAL', 'comment' => $item_name ]);
-	    /*
-	    $txn_id = 11111;
-	    $custom = '2|3';
-		*/
+
 	    $financements_array = explode('|', $custom);
-	    Mylog::create(['action' => 'PAYPAL', 'comment' => $custom ]);
 		/* Calcul du montant */		
 		$amount_checked = 0;
 		foreach ($financements_array as $f) {
 			$g = Gift::find($f);
 			$amount_checked += $g->parts*$g->product->partprice;
-			Mylog::create(['action' => 'PAYPAL', 'comment' => "loop" ]);
 		}
 
 	    
 	    // vérifier que txn_id n'a pas été précédemment traité: Créez une fonction qui va interroger votre base de données
 	    $nb_txn_id = Financement::where('txn_id',$txn_id)->count();
-	    Mylog::create(['action' => 'PAYPAL', 'comment' => "txn = ".$nb_txn_id ]);
 
-	    $comment = 'par '.$g->user->name.'. Montant attendu : '.number_format($amount,2) .'€ Montant proposé '.$payment_amount.' €';
-	       Mylog::create(['action' => 'PAYPAL TEST (AVT FP)', 'comment' => $comment]);
 	    if (!$fp) 
 	    {
-	        $comment = 'par '.$g->user->name.'. Montant attendu : '.number_format($amount,2) .'€ Montant proposé '.$payment_amount.' €';
-	       Mylog::create(['action' => 'PAYPAL FAIL (!FP)', 'comment' => $comment]);
+	        $comment = '#1. par '.$g->user->name.'. Montant attendu : '.number_format($amount_checked,2) .'€ Montant proposé '.$payment_amount.' €';
+	       	Mylog::create(['action' => 'PAYPAL FAIL', 'comment' => $comment]);
 	    }
 	    else
 	    {
@@ -136,28 +125,26 @@ class GiftsController extends BaseController {
 	            $res = fgets ($fp, 1024);
 	            if (strcmp ($res, "VERIFIED") == 0) 
 	            {
-	            	Mylog::create(['action' => 'PAYPAL SUCCES', 'comment' => "VERIFIED"]);
 	            	// transaction valide
 	               	// vérifier que payment_status a la valeur Completed
 	                if ( $payment_status == "Completed") 
 	                {
-	                	Mylog::create(['action' => 'PAYPAL SUCCES', 'comment' => "COMPLETED"]);
 	                	// vérifier que txn_id n'a pas été précédemment traité: Créez une fonction qui va interroger votre base de données
 	                    if ($nb_txn_id == 0) 
 	                    {
-	                    	Mylog::create(['action' => 'PAYPAL SUCCES', 'comment' => "TXN"]);
 	                    	// vérifier que receiver_email est votre adresse email PayPal principale
-	                        if ( "anne.et.mickael.icartgmail.com" == $receiver_email || 1) 
+	                        if ( "anne.et.mickael.icartgmail.com" == $receiver_email || 1)
 	                        {
-	                        	Mylog::create(['action' => 'PAYPAL SUCCES', 'comment' => "EMAIL"]);
 	                        	// vérifier que payment_amount et payment_currency sont corrects
-	                        	if(1)
+	                        	if(number_format($amount_checked,2) == $payment_amount)
 	                        	{
-	                        		Mylog::create(['action' => 'PAYPAL SUCCES', 'comment' => "AMOUNT"]);
+
 	                        		foreach ($financements_array as $f) 
 	                        		{
-	                        			Mylog::create(['action' => 'PAYPAL SUCCES', 'comment' => "OK"]);
 										$g = Gift::find($f);
+										$g->close = date('Y-m-d');
+										$g->save();
+
 										$amount = $g->parts*$g->product->partprice;
 										$financement = new financement();
 										$financement->gift_id = $g->id;
@@ -170,26 +157,48 @@ class GiftsController extends BaseController {
 										$financement->raw = json_encode($input);
 										$financement->save();
 									}
+
+									/* Email de confirmation de paiement */
+									$input['subject'] = 'Confirmation de paiement par Paypal';
+									$input['email'] = $financement->user->email;
+									$input['name'] = $financement->user->name;
+									$input['amount'] = $payment_amount;
+									$input['financements'] = Financement::where('txn_id',$txn_id)->get();
+									Mail::send('emails.confirmationpaiement', $input, function($message) use ($input)
+									{
+									  	$message->from('mickael@anne-et-mickael.com', 'Liste de naissance ICART');
+									  	$message->to($input['email'],  $input['name']);
+									  	$message->subject($input['subject']);
+									});
 	                        	}
 	                        	else
 	                        	{
-	                        		$comment = 'par '.$g->user->name.'. Montant attendu : '.number_format($amount,2) .'€ Moontant proposé '.$payment_amount.' €';
-	                        		Mylog::create(['action' => 'PAYPAL FAIL (!= MONTANT)', 'comment' => $comment]);
+	                        		$comment = '#2. par '.$g->user->name.'. Montant attendu : '.number_format($amount_checked,2) .'€ Montant proposé '.$payment_amount.' €';
+	                        		Mylog::create(['action' => 'PAYPAL FAIL', 'comment' => $comment]);
 	                        	}
-                        		$comment = 'par '.$g->user->name.'. receiver_email = '.$receiver_email;
-	                        	Mylog::create(['action' => 'PAYPAL FAIL (!= email)', 'comment' => $comment]);
+                        		$comment = '#3. par '.$g->user->name.'. receiver_email = '.$receiver_email;
+	                        	Mylog::create(['action' => 'PAYPAL FAIL', 'comment' => $comment]);
 	                        }
-                        	$comment = 'par '.$g->user->name.'. Txn_id = '.$txn_id.'. Montant attendu : '.number_format($amount,2) .'€ Moontant proposé '.$payment_amount.' €';
-	                        Mylog::create(['action' => 'PAYPAL FAIL (TXN_ID > 0)', 'comment' => $comment]);
-	                    } 				// nb_txn_id
-	                    $comment = 'par '.$g->user->name.'. payment_status = '.$payment_status.'. Montant attendu : '.number_format($amount,2) .'€ Montant proposé '.$payment_amount.' €';
-	                    Mylog::create(['action' => 'PAYPAL FAIL (STATUT)', 'comment' => $comment]);
-	               	} 					// payment_status
-	               	$comment = 'par '.$g->user->name.'. res = '.$res.'. Montant attendu : '.number_format($amount,2) .'€ Montant proposé '.$payment_amount.' €';
-	                Mylog::create(['action' => 'PAYPAL FAIL (!= VERIFIED)', 'comment' => $comment]);
-	            }						// VERIFIED
-	       	}							// while						
-	    }								// else
+	                        else // nb_txn_id
+	                        {
+                     			$comment = '#4. par '.$g->user->name.'. Txn_id = '.$txn_id.'. Montant attendu : '.number_format($amount_checked,2) .'€ Moontant proposé '.$payment_amount.' €';
+	                        	Mylog::create(['action' => 'PAYPAL FAIL', 'comment' => $comment]);
+	                        }   
+	                    } 	
+	                    else // payment_status
+	                    {
+		                    $comment = '#5. par '.$g->user->name.'. payment_status = '.$payment_status.'. Montant attendu : '.number_format($amount_checked,2) .'€ Montant proposé '.$payment_amount.' €';
+		                    Mylog::create(['action' => 'PAYPAL FAIL', 'comment' => $comment]);
+	                    }			
+	               	} 	
+	               	else // VERIFIED				
+	               	{
+		               	$comment = '#6. par '.$g->user->name.'. res = '.$res.'. Montant attendu : '.number_format($amount_checked,2) .'€ Montant proposé '.$payment_amount.' €';
+		                Mylog::create(['action' => 'PAYPAL FAIL', 'comment' => $comment]);
+	               	}
+	            }						
+	       	}		// while											
+	    }		// else						
 
 	}
 

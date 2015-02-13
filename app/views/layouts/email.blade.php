@@ -96,7 +96,7 @@
                                        <tbody>
                                           <tr>
                                              <td align="left" valign="middle" style="font-family: Helvetica, arial, sans-serif; font-size: 13px;color: #ffffff">
-                                                <a href="#" style="text-decoration: none; color: #ffffff">&nbsp;&nbsp:&nbsp;Anne et Mickaël</a>
+                                                <a href="#" style="text-decoration: none; color: #ffffff">&nbsp;&nbsp;&nbsp;Anne et Mickaël</a>
                                              </td>
                                           </tr>
                                        </tbody>

@@ -1,6 +1,7 @@
 <?php
+use Illuminate\Database\Eloquent\SoftDeletingTrait;
 class Product extends Eloquent {
-	public $softDelete = true;
+	use SoftDeletingTrait;
 	protected $guarded = array();
 	private $rules = array(
 		'name' 	=> 'required|min:5|max:100'

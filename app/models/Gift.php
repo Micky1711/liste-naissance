@@ -1,6 +1,7 @@
 <?php
+use Illuminate\Database\Eloquent\SoftDeletingTrait;
 class Gift extends Eloquent {
-	
+	use SoftDeletingTrait;
 	public function validate($data, $rules = array())
 	{
 		// $rules = array_merge($this->rules, $rules);

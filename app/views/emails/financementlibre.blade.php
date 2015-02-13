@@ -38,19 +38,10 @@
                                           <tr>
                                              <td style="font-family: Helvetica, arial, sans-serif; font-size: 13px; color: #333333; text-align:left;line-height: 24px;">
                                                 <p>Vous souhaitez nous faire parvenir librement la somme de {{ $montant }} euros par {{ $moyen }}. Nous vous en remercions vivement.</p>
-                                                <p><span style="font-weight:bold">Si vous avez choisi des produits à financer</span>, vous pouvez nous faire parvenir un chèque (à l'ordre d'Anne et Mickaël ICART)<br>
-                                                ou un virement ou bien payer en ligne via Paypal dans le lien "mes offres" sur le site
-                                                </p>
-
                                             </td>
                                           </tr>
                                           <tr>
                                              <td width="100%" height="15"></td>
-                                          </tr>
-                                          <tr>
-                                                <td style="font-family: Helvetica, arial, sans-serif; font-size: 13px; color: #333333; text-align:left;line-height: 24px;">
-                                                Vous pouvez revenir sur votre décision et renoncer à offrir certains articles, mais dans ce cas faites le savoir dans le lien "mes offres" sur le site afin que d'autres personnes puissent le réserver à leur tour.
-                                                </td>
                                           </tr>
                                           @if($moyen == 'PAYPAL')
                                           <tr>

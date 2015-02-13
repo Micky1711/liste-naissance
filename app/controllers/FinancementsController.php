@@ -20,6 +20,7 @@ class FinancementsController extends BaseController {
 			$g = new Gift();
 			$g->product_id = 0;
 			$g->user_id = Auth::user()->id;
+			$g->type = 2;
 			$g->parts = $montant;
 			$g->moyen = $moyen;
 			$g->save();
@@ -34,13 +35,14 @@ class FinancementsController extends BaseController {
 	       	$data['email'] = Auth::user()->email;
 	       	$data['key'] = md5($g->id.'-PAYPAL');
 	       	$data['financements'] = $g->id;
-	       	/*
-	       	Mail::send('emails.financementlibre', $data, function($message)
+	       	$data['subject'] = 'Confirmation de paiement par Paypal';
+	       	Mail::send('emails.financementlibre', $data, function($message) use ($data)
 			{
-			    $message->from('mickael.icart@gmail.com', 'Laravel');
-			    $message->to('mickael.icart@gmail.com');
+			    $message->from('mickael@anne-et-mickael.com', 'Liste de naissance ICART');
+			  	$message->to($data['email'],  $data['name']);
+			  	$message->subject($data['subject']);
 			});
-			*/
+
 
 			/* AFFICHAGE DE LA VUE CORRESPOND AU CHOIX DE PAIEMENT */
 			return View::make('front.financements.librepost')->with($data);
